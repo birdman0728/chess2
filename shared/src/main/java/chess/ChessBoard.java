@@ -28,7 +28,7 @@ public class ChessBoard {
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
         ChessPiece newPiece = new ChessPiece(piece.getTeamColor(), piece.getPieceType());
-        board[position.getColumn()][position.getRow()] = newPiece;
+        board[position.getColumn()-1][position.getRow()-1] = newPiece;
     }
 
     /**
@@ -39,7 +39,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getColumn()][position.getRow()];
+        return board[position.getColumn()-1][position.getRow()-1];
     }
 
     /**
