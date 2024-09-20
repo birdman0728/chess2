@@ -105,13 +105,13 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return maxRow == that.maxRow && maxCol == that.maxCol && Arrays.equals(board, that.board);
+        return maxRow == that.maxRow && maxCol == that.maxCol && Arrays.deepEquals(board, that.board);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hash(maxRow, maxCol);
-        result = 31 * result + Arrays.hashCode(board);
+        result = 31 * result + Arrays.deepHashCode(board);
         return result;
     }
 
@@ -120,7 +120,7 @@ public class ChessBoard {
         return "ChessBoard{" +
                 "maxRow=" + maxRow +
                 ", maxCol=" + maxCol +
-                ", board=" + Arrays.toString(board) +
+                ", board=" + Arrays.deepToString(board) +
                 '}';
     }
 }
