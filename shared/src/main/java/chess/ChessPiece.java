@@ -457,6 +457,7 @@ public class ChessPiece {
                     if (y == 7 && board.getPiece(new ChessPosition(y - 2, x)) == null && board.getPiece(new ChessPosition(y - 1, x)) == null) {
                         validMoves.add(new ChessMove(myPosition, new ChessPosition(y - 2, x), null));
                     }
+
                     //capture right
                     if (y - 1 > 1 && x + 1 < 8) {
                         if (board.getPiece(new ChessPosition(y - 1, x + 1)) != null) {
@@ -464,7 +465,7 @@ public class ChessPiece {
                                 validMoves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 1), null));
                             }
                         }
-                    }else if(y-1 == 1 && x + 1 < 8){
+                    }else if(y-1 == 1 && x + 1 <= 8){
                         if (board.getPiece(new ChessPosition(y - 1, x + 1)) != null) {
                             if (board.getPiece(new ChessPosition(y - 1, x + 1)).getTeamColor() != pieceColor) {
                                 validMoves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x + 1), PieceType.QUEEN ));
@@ -481,7 +482,7 @@ public class ChessPiece {
                                 validMoves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x - 1), null));
                             }
                         }
-                    }else if(y-1 == 1 && x - 1 > 1){
+                    }else if(y-1 == 1 && x - 1 >= 1){
                         if (board.getPiece(new ChessPosition(y - 1, x - 1)) != null) {
                             if (board.getPiece(new ChessPosition(y - 1, x - 1)).getTeamColor() != pieceColor) {
                                 validMoves.add(new ChessMove(myPosition, new ChessPosition(y - 1, x-1), PieceType.QUEEN ));
