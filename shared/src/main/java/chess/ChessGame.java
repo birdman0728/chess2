@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -63,7 +64,18 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece movingPiece = curBoard.getPiece(move.startPostition);
+
+        if(validMoves(move.startPostition) != null){
+            if(move.getPromotionPiece() == null) {//non-promotionPiece
+                curBoard.addPiece(move.endPosition, movingPiece);
+            }else{//promotionPiece
+                curBoard.addPiece(move.endPosition, new ChessPiece( movingPiece.getTeamColor(),move.getPromotionPiece()));
+            }
+            curBoard.removePiece(move.startPostition);
+        }else{
+            throw new InvalidMoveException("The move is invalid: " + move.toString());
+        }
     }
 
     /**
@@ -163,5 +175,26 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return curBoard;
+    }
+
+    @Override
+    public String toString() {
+        return "ChessGame{" +
+                "curBoard=" + curBoard +
+                ", currentColorTurn=" + currentColorTurn +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessGame chessGame = (ChessGame) o;
+        return Objects.equals(curBoard, chessGame.curBoard) && currentColorTurn == chessGame.currentColorTurn;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(curBoard, currentColorTurn);
     }
 }
