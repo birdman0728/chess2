@@ -74,7 +74,7 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPiece checkKing = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
-        ChessPosition checkKingPos;
+        ChessPosition checkKingPos = null;
         boolean isInCheck = false;
         //check for king
         for(int i = 1; i <=8 ; i++){
@@ -85,7 +85,11 @@ public class ChessGame {
             }
         }
         //Check all possible other team moves
-
+        for(ChessMove move: checkTeamMoves(oppColor(teamColor))){
+            if (move.endPosition == checkKingPos) {
+                isInCheck = true;
+            }
+        }
 
         return isInCheck;
     }
@@ -94,12 +98,18 @@ public class ChessGame {
         Collection<ChessMove> AllPossibleMoves = null;
         for(int i = 1; i <=8 ; i++) {
             for (int j = 1; j <= 8; j++) {
-                //check valid moves
-
+                AllPossibleMoves.addAll(validMoves(new ChessPosition(i,j)));
             }
         }
-
         return AllPossibleMoves;
+    }
+
+    public TeamColor oppColor(TeamColor teamColor){
+        if (teamColor == TeamColor.WHITE){
+            return TeamColor.BLACK;
+        }else{
+            return TeamColor.WHITE;
+        }
     }
 
     /**
