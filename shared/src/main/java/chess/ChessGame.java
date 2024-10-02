@@ -94,6 +94,7 @@ public class ChessGame {
         return isInCheck;
     }
 
+
     public Collection<ChessMove> checkTeamMoves(TeamColor teamColor){
         Collection<ChessMove> AllPossibleMoves = null;
         for(int i = 1; i <=8 ; i++) {
@@ -103,6 +104,7 @@ public class ChessGame {
         }
         return AllPossibleMoves;
     }
+
 
     public TeamColor oppColor(TeamColor teamColor){
         if (teamColor == TeamColor.WHITE){
@@ -119,7 +121,13 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        boolean isInCheckmate = false;
+        if(isInCheck(teamColor)){
+            if(checkTeamMoves(teamColor) == null){
+                isInCheckmate = true;
+            }
+        }
+        return isInCheckmate;
     }
 
     /**
