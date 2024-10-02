@@ -51,10 +51,20 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         Collection<ChessMove> possibleMoves = curBoard.getPiece(startPosition).pieceMoves(curBoard,startPosition);
+        Collection<ChessMove> validatedMoves = null;
+        ChessPiece workingPiece = curBoard.getPiece(startPosition);
         for(ChessMove move: possibleMoves){
+            curBoard.addPiece(move.getEndPosition(), workingPiece);
+            curBoard.removePiece(startPosition);
+            if(!isInCheck(workingPiece.getTeamColor())){
+                validatedMoves.add(move);
+            }
+            curBoard.addPiece(startPosition,workingPiece);
+            curBoard.removePiece(move.getEndPosition());
 
         }
 
+        return validatedMoves;
     }
 
     /**
@@ -65,8 +75,15 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece movingPiece = curBoard.getPiece(move.startPostition);
+        boolean movesMatch = false;
 
-        if(validMoves(move.startPostition) != null){
+        for(ChessMove posMove: validMoves(move.getStartPosition())){
+            if(posMove.getEndPosition() == move.getEndPosition()){
+                movesMatch = true;
+            }
+        }
+
+        if(movesMatch){
             if(move.getPromotionPiece() == null) {//non-promotionPiece
                 curBoard.addPiece(move.endPosition, movingPiece);
             }else{//promotionPiece
