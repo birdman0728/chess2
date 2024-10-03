@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -15,7 +16,7 @@ public class ChessGame {
     TeamColor currentColorTurn;
 
     public ChessGame() {
-
+        curBoard.resetBoard();
     }
 
     /**
@@ -50,21 +51,25 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> possibleMoves = curBoard.getPiece(startPosition).pieceMoves(curBoard,startPosition);
-        Collection<ChessMove> validatedMoves = null;
-        ChessPiece workingPiece = curBoard.getPiece(startPosition);
-        for(ChessMove move: possibleMoves){
-            curBoard.addPiece(move.getEndPosition(), workingPiece);
-            curBoard.removePiece(startPosition);
-            if(!isInCheck(workingPiece.getTeamColor())){
-                validatedMoves.add(move);
+        if(curBoard.getPiece(startPosition) != null) {
+            Collection<ChessMove> possibleMoves = curBoard.getPiece(startPosition).pieceMoves(curBoard, startPosition);
+            Collection<ChessMove> validatedMoves = new HashSet<>();
+            ChessPiece workingPiece = curBoard.getPiece(startPosition);
+            for (ChessMove move : possibleMoves) {
+                curBoard.addPiece(move.getEndPosition(), workingPiece);
+                curBoard.removePiece(startPosition);
+                if (!isInCheck(workingPiece.getTeamColor())) {
+                    validatedMoves.add(move);
+                }
+                //readd possibly captured pieces
+                curBoard.addPiece(startPosition, workingPiece);
+                curBoard.removePiece(move.getEndPosition());
+
             }
-            curBoard.addPiece(startPosition,workingPiece);
-            curBoard.removePiece(move.getEndPosition());
-
+            return validatedMoves;
+        }else{
+            return null;
         }
-
-        return validatedMoves;
     }
 
     /**
@@ -77,9 +82,11 @@ public class ChessGame {
         ChessPiece movingPiece = curBoard.getPiece(move.startPostition);
         boolean movesMatch = false;
 
-        for(ChessMove posMove: validMoves(move.getStartPosition())){
-            if(posMove.getEndPosition() == move.getEndPosition()){
-                movesMatch = true;
+        if(curBoard.getPiece(move.getStartPosition()) != null) {
+            for (ChessMove posMove : validMoves(move.getStartPosition())) {
+                if (posMove.getEndPosition() == move.getEndPosition()) {
+                    movesMatch = true;
+                }
             }
         }
 
@@ -102,20 +109,22 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ChessPiece checkKing = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
+//        ChessPiece checkKing = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         ChessPosition checkKingPos = null;
         boolean isInCheck = false;
         //check for king
         for(int i = 1; i <=8 ; i++){
             for(int j = 1; j <=8; j++){
-                if(curBoard.getPiece(new ChessPosition(i,j)) == checkKing){
+                if(curBoard.getPiece(new ChessPosition(i,j)) != null &&
+                        curBoard.getPiece(new ChessPosition(i,j)).getPieceType() == ChessPiece.PieceType.KING &&
+                        curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor){
                     checkKingPos = new ChessPosition(i,j);
                 }
             }
         }
         //Check all possible other team moves
         for(ChessMove move: checkTeamMoves(oppColor(teamColor))){
-            if (move.endPosition == checkKingPos) {
+            if (move.endPosition.equals(checkKingPos)) {
                 isInCheck = true;
             }
         }
@@ -125,10 +134,17 @@ public class ChessGame {
 
 
     public Collection<ChessMove> checkTeamMoves(TeamColor teamColor){
-        Collection<ChessMove> AllPossibleMoves = null;
+        Collection<ChessMove> AllPossibleMoves = new HashSet<>();
         for(int i = 1; i <=8 ; i++) {
             for (int j = 1; j <= 8; j++) {
-                AllPossibleMoves.addAll(validMoves(new ChessPosition(i,j)));
+                if(curBoard.getPiece(new ChessPosition(i,j)) != null && curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor) {
+//                    AllPossibleMoves.addAll(validMoves(new ChessPosition(i, j)));/////////////////////////////////////////////////////////////////////////////////////////
+                    if(curBoard.getPiece(new ChessPosition(i,j)).pieceMoves(curBoard,new ChessPosition(i,j)) != null) {
+                        for (ChessMove move : curBoard.getPiece(new ChessPosition(i, j)).pieceMoves(curBoard, new ChessPosition(i,j))) {
+                            AllPossibleMoves.add(move);
+                        }
+                    }
+                }
             }
         }
         return AllPossibleMoves;
