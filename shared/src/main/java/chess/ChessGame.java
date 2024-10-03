@@ -13,10 +13,11 @@ import java.util.Objects;
 public class ChessGame {
 
     ChessBoard curBoard = new ChessBoard();
-    TeamColor currentColorTurn;
+    TeamColor currentColorTurn = TeamColor.WHITE;
 
     public ChessGame() {
         curBoard.resetBoard();
+
     }
 
     /**
@@ -87,8 +88,8 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        TeamColor moveColor = curBoard.getPiece(move.getStartPosition()).getTeamColor();
-        if(curBoard.getPiece(move.getStartPosition()) != null && moveColor.equals(currentColorTurn)) {
+        if(curBoard.getPiece(move.getStartPosition()) != null && curBoard.getPiece(move.getStartPosition()).getTeamColor().equals(currentColorTurn)) {
+            TeamColor moveColor = curBoard.getPiece(move.getStartPosition()).getTeamColor();
             ChessPiece movingPiece = curBoard.getPiece(move.startPostition);
             boolean movesMatch = false;
 
@@ -153,7 +154,6 @@ public class ChessGame {
         for(int i = 1; i <=8 ; i++) {
             for (int j = 1; j <= 8; j++) {
                 if(curBoard.getPiece(new ChessPosition(i,j)) != null && curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() == teamColor) {
-//                    AllPossibleMoves.addAll(validMoves(new ChessPosition(i, j)));/////////////////////////////////////////////////////////////////////////////////////////
                     if(curBoard.getPiece(new ChessPosition(i,j)).pieceMoves(curBoard,new ChessPosition(i,j)) != null) {
                         for (ChessMove move : curBoard.getPiece(new ChessPosition(i, j)).pieceMoves(curBoard, new ChessPosition(i,j))) {
                             AllPossibleMoves.add(move);
@@ -183,8 +183,12 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         boolean isInCheckmate = false;
         if(isInCheck(teamColor)){
-            if(checkTeamMoves(teamColor) == null){
-                isInCheckmate = true;
+            for(int i = 1; i < 9; i++){
+                for(int j = 1; j < 9; j++){
+                    if(curBoard.getPiece(new ChessPosition(i,j)) != null && teamColor == curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() && validMoves(new ChessPosition(i,j)).isEmpty()){
+                        isInCheckmate = true;
+                    }
+                }
             }
         }
         return isInCheckmate;
@@ -200,8 +204,12 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         boolean isInStalemate = false;
         if(!isInCheck(teamColor)){
-            if (checkTeamMoves(teamColor) == null) {
-                isInStalemate = true;
+            for(int i = 1; i < 9; i++){
+                for(int j = 1; j < 9; j++){
+                    if(curBoard.getPiece(new ChessPosition(i,j)) != null && teamColor == curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() && validMoves(new ChessPosition(i,j)).isEmpty()){
+                        isInStalemate = true;
+                    }
+                }
             }
         }
         return isInStalemate;
