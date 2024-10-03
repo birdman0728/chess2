@@ -87,26 +87,33 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessPiece movingPiece = curBoard.getPiece(move.startPostition);
-        boolean movesMatch = false;
+        TeamColor moveColor = curBoard.getPiece(move.getStartPosition()).getTeamColor();
+        if(curBoard.getPiece(move.getStartPosition()) != null && moveColor.equals(currentColorTurn)) {
+            ChessPiece movingPiece = curBoard.getPiece(move.startPostition);
+            boolean movesMatch = false;
 
-        if(curBoard.getPiece(move.getStartPosition()) != null) {
-            for (ChessMove posMove : validMoves(move.getStartPosition())) {
-                if (posMove.getEndPosition() == move.getEndPosition()) {
-                    movesMatch = true;
+            if (curBoard.getPiece(move.getStartPosition()) != null) {
+                for (ChessMove posMove : validMoves(move.getStartPosition())) {
+                    if (posMove.getEndPosition().equals(move.getEndPosition())) {
+                        movesMatch = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        if(movesMatch){
-            if(move.getPromotionPiece() == null) {//non-promotionPiece
-                curBoard.addPiece(move.endPosition, movingPiece);
-            }else{//promotionPiece
-                curBoard.addPiece(move.endPosition, new ChessPiece( movingPiece.getTeamColor(),move.getPromotionPiece()));
+            if (movesMatch) {
+                if (move.getPromotionPiece() == null) {//non-promotionPiece
+                    curBoard.addPiece(move.endPosition, movingPiece);
+                } else {//promotionPiece
+                    curBoard.addPiece(move.endPosition, new ChessPiece(movingPiece.getTeamColor(), move.getPromotionPiece()));
+                }
+                curBoard.removePiece(move.startPostition);
+                setTeamTurn(oppColor(moveColor));
+            } else {
+                throw new InvalidMoveException("The move is invalid: " + move.toString());
             }
-            curBoard.removePiece(move.startPostition);
         }else{
-            throw new InvalidMoveException("The move is invalid: " + move.toString());
+            throw new InvalidMoveException("Not your turn");
         }
     }
 
