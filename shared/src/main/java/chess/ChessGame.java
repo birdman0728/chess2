@@ -54,8 +54,14 @@ public class ChessGame {
         if(curBoard.getPiece(startPosition) != null) {
             Collection<ChessMove> possibleMoves = curBoard.getPiece(startPosition).pieceMoves(curBoard, startPosition);
             Collection<ChessMove> validatedMoves = new HashSet<>();
+            ChessPiece capturedPiece = null;
             ChessPiece workingPiece = curBoard.getPiece(startPosition);
             for (ChessMove move : possibleMoves) {
+                boolean captured = false;
+                if(curBoard.getPiece(move.getEndPosition()) != null) {
+                    capturedPiece = curBoard.getPiece(move.getEndPosition());
+                    captured = true;
+                }
                 curBoard.addPiece(move.getEndPosition(), workingPiece);
                 curBoard.removePiece(startPosition);
                 if (!isInCheck(workingPiece.getTeamColor())) {
@@ -64,7 +70,9 @@ public class ChessGame {
                 //readd possibly captured pieces
                 curBoard.addPiece(startPosition, workingPiece);
                 curBoard.removePiece(move.getEndPosition());
-
+                if(captured) {
+                    curBoard.addPiece(move.getEndPosition(), capturedPiece);
+                }
             }
             return validatedMoves;
         }else{
