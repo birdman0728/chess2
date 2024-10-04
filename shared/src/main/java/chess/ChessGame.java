@@ -181,17 +181,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        boolean isInCheckmate = false;
-        if(isInCheck(teamColor)){
-            for(int i = 1; i < 9; i++){
-                for(int j = 1; j < 9; j++){
-                    if(curBoard.getPiece(new ChessPosition(i,j)) != null && teamColor == curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() && validMoves(new ChessPosition(i,j)).isEmpty()){
-                        isInCheckmate = true;
-                    }
-                }
-            }
+//        boolean isInCheckmate = false;
+        if(isInCheck(teamColor) && noValidMoves(teamColor)){
+            return true;
         }
-        return isInCheckmate;
+        return false;
     }
 
     /**
@@ -202,17 +196,22 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        boolean isInStalemate = false;
-        if(!isInCheck(teamColor)){
-            for(int i = 1; i < 9; i++){
-                for(int j = 1; j < 9; j++){
-                    if(curBoard.getPiece(new ChessPosition(i,j)) != null && teamColor == curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() && validMoves(new ChessPosition(i,j)).isEmpty()){
-                        isInStalemate = true;
-                    }
+//        boolean isInStalemate = true;
+        if(!isInCheck(teamColor) && noValidMoves(teamColor)){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean noValidMoves(TeamColor teamColor){
+        for(int i = 1; i < 9; i++){
+            for(int j = 1; j < 9; j++){
+                if(curBoard.getPiece(new ChessPosition(i,j)) != null && teamColor == curBoard.getPiece(new ChessPosition(i,j)).getTeamColor() && !validMoves(new ChessPosition(i,j)).isEmpty()){
+                    return false;
                 }
             }
         }
-        return isInStalemate;
+        return true;
     }
 
     /**
