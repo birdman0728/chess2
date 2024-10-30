@@ -1,10 +1,13 @@
 package server;
 
+import RAMDataBase.DataBase;
 import spark.*;
 
 public class Server {
 
     public int run(int desiredPort) {
+        DataBase db = new DataBase();//tempDataBase
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
